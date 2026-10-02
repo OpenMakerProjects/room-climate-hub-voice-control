@@ -1,0 +1,21 @@
+{
+  "id": 3,
+  "title": "Room Climate Hub Voice Control",
+  "repository_slug": "room-climate-hub-voice-control",
+  "category": "Smart Home",
+  "platform": "Raspberry Pi Zero 2 W",
+  "platform_family": "python",
+  "difficulty": "Intermediate",
+  "estimated_hours": 28,
+  "connectivity": "Local only",
+  "components": [
+    "relay module",
+    "current sensor",
+    "PIR sensor"
+  ],
+  "scope": "Build a smart home prototype that uses relay module, current sensor, PIR sensor to accept local voice commands. Include setup instructions, a circuit diagram, tested firmware, and sample output.",
+  "key_deliverable": "Voice Control demonstration with repeatable test steps",
+  "mode": "closed_loop_control",
+  "entrypoint": "src/main.py",
+  "roadmap_source": "openmaker-2100-project-roadmap.xlsx"
+}
