@@ -1,10 +1,10 @@
 {
-  "bytes": 1813594,
+  "bytes": 1943736,
   "dimensions": [
     1536,
     1024
   ],
-  "sha256": "e25f09e2c2684b4279a36cbae15232cfacd62819162e2504aea62a8fe35929fa",
+  "sha256": "a42b78fa3007d6fc732762d838bec833469b144ad7c99c708a7c59377c983027",
   "chunks": [
     "project-overview.png.b64.000",
     "project-overview.png.b64.001",
@@ -21,6 +21,7 @@
     "project-overview.png.b64.012",
     "project-overview.png.b64.013",
     "project-overview.png.b64.014",
-    "project-overview.png.b64.015"
+    "project-overview.png.b64.015",
+    "project-overview.png.b64.016"
   ]
 }
