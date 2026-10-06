@@ -1,17 +1,3 @@
-# Wiring guide
+# Wiring
 
-This is a low-voltage prototype wiring plan for **Room Climate Hub Voice Control**. Confirm every module's datasheet because breakout-board pinouts vary.
-
-| Component | Suggested pin | Role | Check |
-| --- | --- | --- | --- |
-| relay module | 5 | Digital I/O | Confirm the module voltage and pinout before power-up. |
-| current sensor | A0 | Analog input | Confirm the module voltage and pinout before power-up. |
-| PIR sensor | A1 | Analog input | Confirm the module voltage and pinout before power-up. |
-| Status output | LED_BUILTIN | Output | Use a resistor when an external LED is fitted. |
-
-## Power
-
-- Use a regulated supply sized for the selected modules.
-- Join grounds unless an interface is explicitly isolated.
-- Do not connect mains voltage directly to a development board.
-- Add a fuse, emergency stop, and certified isolation where a real actuator can create risk.
+The exact pin table is in README and editable circuit-diagram.svg. Pi pin1 3V3 → INA VCC; pin6 GND → all grounds/external negative; pin3 BCM2 SDA and pin5 BCM3 SCL → INA. Pin11 BCM17 ← 3.3V-safe PIR OUT. Pin13 BCM27 → active-high 3.3V-compatible relay IN. Fused external5V → relay COM; NO → INA VIN+; VIN− → 5V-rated LED lamp+; lamp− → externalnegative. External5V powers relay/PIR but never Pi GPIO or INA logic. USB microphone via OTG hub; Pi power separate USB.

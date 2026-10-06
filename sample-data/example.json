@@ -1,12 +1,1 @@
-{
-  "project_id": 3,
-  "timestamp": "2026-01-01T00:00:00Z",
-  "state": "normal",
-  "score": 0.42,
-  "output": false,
-  "values": [
-    0.38,
-    0.43,
-    0.45
-  ]
-}
+{"project_id":3,"relay_on":true,"motion":true,"current_ma":80.0,"fault":false,"command_accepted":true}

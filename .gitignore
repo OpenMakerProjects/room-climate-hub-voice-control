@@ -1,7 +1,7 @@
 __pycache__/
-*.py[cod]
+.venv/
 .env
-.vscode/
-.idea/
-.pio/
-build/
+models/
+*.wav
+*.pem
+*.key

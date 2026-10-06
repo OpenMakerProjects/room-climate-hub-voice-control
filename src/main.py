@@ -1,69 +1,43 @@
-#!/usr/bin/env python3
-"""Room Climate Hub Voice Control: runnable simulation-first controller."""
-
-from __future__ import annotations
-
-import argparse
-import json
-import math
-import time
-from dataclasses import asdict, dataclass
-
-PROJECT_ID = 3
-MODE = "closed_loop_control"
-DEFAULT_THRESHOLD = 0.48
-
-
-@dataclass(frozen=True)
-class Snapshot:
-    timestamp: float
-    values: list[float]
-    score: float
-    valid: bool
-
-
-class Controller:
-    def __init__(self, threshold: float = DEFAULT_THRESHOLD, confirmations: int = 5) -> None:
-        if not 0.0 <= threshold <= 1.0:
-            raise ValueError("threshold must be between 0 and 1")
-        self.threshold = threshold
-        self.confirmations_required = max(1, confirmations)
-        self.confirmations = 0
-        self.output_active = False
-
-    def evaluate(self, values: list[float], timestamp: float | None = None) -> Snapshot:
-        valid = bool(values) and all(math.isfinite(value) and 0.0 <= value <= 1.0 for value in values)
-        score = sum(values) / len(values) if valid else 0.0
-        condition = valid and score >= self.threshold
-        self.confirmations = min(self.confirmations + 1, self.confirmations_required) if condition else 0
-        self.output_active = valid and self.confirmations >= self.confirmations_required
-        return Snapshot(timestamp or time.time(), values, score, valid)
-
-
-def simulated_values(step: int) -> list[float]:
-    phase = step / 5.0 + PROJECT_ID / 17.0
-    return [round((math.sin(phase + offset) + 1.0) / 2.0, 4) for offset in (0.0, 1.4, 2.8)]
-
-
-def run(iterations: int, interval: float, threshold: float) -> None:
-    controller = Controller(threshold=threshold)
-    for step in range(iterations):
-        snapshot = controller.evaluate(simulated_values(step))
-        record = asdict(snapshot) | {
-            "project_id": PROJECT_ID,
-            "mode": MODE,
-            "state": "active" if controller.output_active else ("normal" if snapshot.valid else "fault"),
-            "output": controller.output_active,
-        }
-        print(json.dumps(record, sort_keys=True))
-        if interval > 0:
-            time.sleep(interval)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--iterations", type=int, default=10)
-    parser.add_argument("--interval", type=float, default=0.5)
-    parser.add_argument("--threshold", type=float, default=DEFAULT_THRESHOLD)
-    options = parser.parse_args()
-    run(max(1, options.iterations), max(0.0, options.interval), options.threshold)
+"""Fully local Vosk voice controller; deterministic simulation also available."""
+import argparse,json,pathlib,queue,time
+from .controller import Controller
+class Simulation:
+    def __init__(self):self.on=False
+    def relay(self,on):self.on=on
+    def current_ma(self):return 80.0 if self.on else 0.0
+    def motion(self):return True
+    def close(self):pass
+def simulated(commands):
+    h=Simulation();c=Controller(h)
+    try:
+        for command in commands:print(json.dumps(c.command(command)))
+    finally:c.close();h.close()
+def voice(model_path,device):
+    import sounddevice as sd
+    from vosk import Model,KaldiRecognizer
+    from .hardware import Hardware
+    if not pathlib.Path(model_path).is_dir():raise ValueError('Supply an unpacked local Vosk model directory')
+    model=Model(model_path);recognizer=KaldiRecognizer(model,16000,json.dumps(['lamp on','lamp off','status','[unk]']))
+    q=queue.Queue(maxsize=8)
+    def audio(data,frames,timing,status):
+        if status:print('Audio overrun/underflow; recognition may be incomplete',flush=True)
+        try:q.put_nowait(bytes(data))
+        except queue.Full:pass # Drop new blocks rather than blocking audio callback.
+    hardware=Hardware();controller=Controller(hardware)
+    try:
+        with sd.RawInputStream(samplerate=16000,blocksize=1600,device=device,dtype='int16',channels=1,callback=audio):
+            while True:
+                # Safety/current poll each 100ms audio block; recognition/network-free.
+                print(json.dumps(controller.tick()),flush=True)
+                try:data=q.get(timeout=.1)
+                except queue.Empty:continue
+                if recognizer.AcceptWaveform(data):
+                    text=json.loads(recognizer.Result()).get('text','')
+                    if text:print(json.dumps(controller.command(text)),flush=True)
+    finally:controller.close();hardware.close()
+def main():
+    p=argparse.ArgumentParser();p.add_argument('--simulate',nargs='*');p.add_argument('--model');p.add_argument('--device');a=p.parse_args()
+    if a.simulate is not None:simulated(a.simulate)
+    elif a.model:voice(a.model,a.device)
+    else:p.error('Use --simulate "lamp on" status "lamp off" or --model PATH')
+if __name__=='__main__':main()

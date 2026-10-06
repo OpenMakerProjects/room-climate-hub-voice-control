@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 820" role="img" aria-labelledby="title desc">
+<title id="title">Room Climate Hub low-voltage circuit</title><desc id="desc">Pi BCM17 reads PIR OUT; BCM27 drives active-high relay IN. BCM2 and 22 connect INA219 SDA and SCL. Logic is 3.3V. Fused 5V lamp power runs through relay COM/NO and INA219 VIN plus/minus. All grounds are common.</desc>
+<style>text{font:16px sans-serif;fill:#111}rect{fill:#f6f8fa;stroke:#222;stroke-width:2}path{fill:none;stroke:#222;stroke-width:2}.power{stroke:#c22}.ground{stroke:#555}.label{font-size:13px}</style>
+<text x="30" y="30">Project 3 — Raspberry Pi Zero 2 W, HC-SR501 PIR, INA219 (0.1Ω), active-high relay</text>
+<rect x="30" y="100" width="230" height="340"/><text x="50" y="130">Pi Zero 2 W</text>
+<text x="140" y="170">3V3</text><text x="140" y="220">BCM17</text><text x="140" y="270">BCM27</text><text x="140" y="320">BCM2 SDA</text><text x="140" y="370">BCM3 SCL</text><text x="140" y="420">GND</text>
+<rect x="400" y="90" width="260" height="160"/><text x="420" y="120">HC-SR501 PIR</text><text x="420" y="170">VCC: regulated 5V</text><text x="420" y="220">OUT: 3.3V → BCM17</text><text x="420" y="245" class="label">GND → common ground</text>
+<path d="M260 215 H390"/><text x="285" y="205" class="label">OUT</text>
+<rect x="750" y="90" width="310" height="200"/><text x="770" y="120">Relay module</text><text x="770" y="160">VCC: 5V; GND: common</text><text x="770" y="200">IN: active HIGH, 3.3V compatible</text><text x="770" y="240">COM / NO: 5V lamp only</text><text x="770" y="275" class="label">NC unused; built-in coil driver/diode</text>
+<path d="M260 265 H700 V200 H750"/>
+<rect x="400" y="320" width="350" height="210"/><text x="420" y="350">INA219 breakout @ 0x40</text><text x="420" y="385">VCC: 3.3V; GND: common</text><text x="420" y="420">SDA ← BCM2; SCL ← BCM3</text><text x="420" y="455">Pull-ups SDA/SCL to 3.3V</text><text x="420" y="490">VIN+ → 0.1Ω shunt → VIN−</text><text x="420" y="520" class="label">A0/A1 tied GND; 5V never on SDA/SCL</text>
+<path class="power" d="M260 165 H350 V380 H400"/>
+<path d="M260 315 H300 V410 H400 M260 365 H280 V435 H400"/>
+<path class="ground" d="M260 415 H330 V560 H1060"/><text x="420" y="585">Common GND: Pi, PIR, relay, INA219, 5V supply, lamp−</text>
+<rect x="30" y="620" width="240" height="110"/><text x="45" y="655">Regulated 5V ≤ 1A supply</text><text x="45" y="685">+5V → fuse 0.25A</text><text x="45" y="715">GND → common GND</text>
+<rect x="400" y="630" width="210" height="90"/><text x="420" y="660">Relay COM → NO</text><text x="420" y="695">normally open</text>
+<rect x="660" y="630" width="180" height="90"/><text x="675" y="660">INA219</text><text x="675" y="695">VIN+ → VIN−</text>
+<rect x="890" y="630" width="180" height="90"/><text x="905" y="660">5V lamp +</text><text x="905" y="695">lamp − → GND</text>
+<path class="power" d="M270 675 H400 M610 675 H660 M840 675 H890"/>
+<text x="30" y="775">Fused +5V also feeds PIR VCC and relay VCC. Pi uses USB power; do not join USB 5V rails.</text>
+<text x="30" y="805">Header: 3V3=P1; GND=P6; BCM17=P11; BCM27=P13; SDA=P3; SCL=P5. USB mic via OTG hub.</text>
+</svg>
